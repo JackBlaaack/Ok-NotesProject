@@ -1,0 +1,42 @@
+{
+  "name": "ok-notesproject",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx playwright test",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --fix",
+    "prettier": "prettier --config .prettierrc src/**/*.ts --check",
+    "allure-create": "allure generate allure-results -o allure-report --clean",
+"allure-open": "npm run allure-create && allure open allure-report"
+
+    
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@playwright/test": "^1.46.0",
+    "@types/allure-js-commons": "^0.0.4",
+    "@types/node": "^22.2.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.1",
+    "@typescript-eslint/parser": "^8.0.1",
+    "allure-commandline": "^2.30.0",
+    "allure-playwright": "^3.0.0-beta.10",
+    "eslint": "^9.9.0",
+    "globals": "^15.9.0",
+    "playwright": "^1.46.0",
+    "prettier": "^3.3.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.0.1"
+  },
+  "dependencies": {
+    "allure-js-commons": "^3.0.0-beta.10",
+    "dotenv": "^16.4.5"
+  },
+  "overrides": {
+    "eslint": "^9.9.0"
+  }
+}

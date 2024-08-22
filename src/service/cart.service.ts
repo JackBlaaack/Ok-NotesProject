@@ -47,40 +47,53 @@ export class CartPageService {
     }
     @logStep('Delete product from cart')
     async deleteProductOfCart() {
+      try {
         const countText = await this.homePage.getText(this.homePage.cartCounter)
         const count = parseInt(countText, 10);
         if (count > 0) {
           console.log(`current count: ${count}`);
+          console.log('Clicking cart button...');
           await this.homePage.clickToShoppingCart();
-          await this.homePage.waitForElementAndScroll(this.cartPage.windowOfCart, TIMEOUT_10_SEC)
+          await this.homePage.waitForElementAndScroll(this.cartPage.windowOfCart, TIMEOUT_20_SEC);
+          console.log('Clicking clear button...');
           await this.cartPage.clickClearButton();
-          await this.homePage.waitForElementAndScroll(this.homePage.cartCounter, TIMEOUT_20_SEC);
+          await this.homePage.waitForElement(this.cartPage.clearButton, "hidden");
+  
+
+          const updatedCountText = await this.homePage.getText(this.homePage.cartCounter);
+            const updatedCount = parseInt(updatedCountText, 10);
+            if (updatedCount === 0) {
+                console.log('The cart has been cleared successfully.');
+            } else {
+                console.log('Failed to clear the cart. Current count:', updatedCount);
+            }
         } else {
           console.log('The cart is an empty');
         }   
+      }catch(error) {
+        throw new Error(`Failed to delete products. reason: \n ${(error as Error).message}`)
+      }
+        
 }
 
 @logStep('Check Product Names in Cart')
-async CheckProductsName() {
-  const cartProducts = await this.homePage.findElement(this.cartPage.listofProducts).allInnerTexts();
+async checkProductsName() {
+  const cartProductElements = await this.homePage.findElement(this.cartPage.listofProducts).all();
+
+  // Извлекаем текст из каждого элемента
+  const cartProducts = await Promise.all(cartProductElements.map(async (element) => {
+    return await element.innerText(); // Или используйте другой метод для получения текста
+  }));
+
   console.log(`cartProducts: ${cartProducts}`);
 
-  const combinedProductsString = cartProducts.join('\n');
-
-  const productLines = combinedProductsString.split('\n');
-
-  // Извлекаем только названия продуктов
-  const actualCartProducts = productLines
-    .map(item => item.split(' - ')[0].trim()) // Извлекаем только название до первого ' - '
-    .filter(name => name); // Убираем пустые строки, если они есть
-
-  console.log(`actualCartProducts: ${actualCartProducts}`);
+  const actualCartProductsElement = cartProducts.join('\n');
 
   const expectedProductNames = Array.isArray(itemNames) ? itemNames : Object.values(itemNames);
   console.log(`expectedProductNames: ${expectedProductNames}`);
   
-  expectedProductNames.forEach(expectedName => {
-    expect(actualCartProducts).toContain(expectedName);
+  expectedProductNames.forEach(expectedProduct => {
+    expect(actualCartProductsElement).toContain(expectedProduct);
   });
 
 }

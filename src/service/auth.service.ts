@@ -31,6 +31,7 @@ export class AuthPageService {
   async loginAsAdmin() {
     try {
       await this.login({ login: ADMIN_USERNAME, password: ADMIN_PASSWORD });
+      await this.authPage.awaitForPage(BASE_URL);
     } catch (error) {
       throw new Error(`Failed to login as Admin. reason : \n ${(error as Error).message}`);
     }
